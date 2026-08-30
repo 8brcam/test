@@ -387,7 +387,7 @@
         });
     }
 
-    // 3. Picture Pipeline Loaders
+    // 3. Picture Pipeline Loaders (FIXED)
     if (urlInput) {
         urlInput.addEventListener('input', (e) => {
             const trimmedUrl = e.target.value.trim();
@@ -397,13 +397,14 @@
 
     if (imageLoader) {
         imageLoader.addEventListener('change', function(e) {
-            if (e.target.files && e.target.files) { 
+            // FIXED: Added strict checking for the specific image index element
+            if (e.target.files && e.target.files[0]) { 
                 const reader = new FileReader();
                 reader.onload = function(event) {
                     if (urlInput) urlInput.value = ''; 
                     injectAvatarImage(event.target.result);
                 };
-                reader.readAsDataURL(e.target.files);
+                reader.readAsDataURL(e.target.files[0]); // FIXED: Reads the actual image index instead of an array list
             }
         });
     }
@@ -513,7 +514,7 @@
         copyToClipboard(finalPayload, 'actionBtn', 'Master Page Copied! ✓');
     };
 
-    // 7B. Appender Generator (Copies only the card layer to append down the road)
+    // 7B. Appender Generator (Copies only the card layer)
     window.generateSingleCardCode = function() {
         const coreCardStructure = document.querySelector('.card-container')?.innerHTML || '';
         const cardPayload = `<div class="card-container" style="perspective: 1500px; display: inline-flex; justify-content: center; align-items: center; margin: 20px;">${coreCardStructure}</div>`;
