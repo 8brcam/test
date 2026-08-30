@@ -453,39 +453,57 @@
         });
     }
 
-    // 7. Interactive Bundle Compiler with MULTI-CARD ARRAY COEXISTENCE LOOP FIXED
+    // 7. Interactive Bundle Compiler with MULTI-CARD DUPLICATION CHECKS FIXED
     function generateBakedCode() {
         const primaryStyles = document.getElementById('themeStylesheet')?.outerHTML || '';
         const coreCardStructure = document.querySelector('.card-container')?.innerHTML || '';
         
-        // Loop handles each card instance separately so pasting multiple bundles doesn't break motion scripts
         const automationScript = `
         <script>
-            document.querySelectorAll('.neon-border-wrapper').forEach(wrapper => {
-                const inner = wrapper.querySelector('.card-inner');
-                if (inner) {
-                    wrapper.addEventListener('mousemove', (e) => {
-                        const rect = wrapper.getBoundingClientRect();
-                        const x = e.clientX - rect.left;
-                        const y = e.clientY - rect.top;
-                        const rx = ((y / rect.height) - 0.5) * -28;
-                        const ry = ((x / rect.width) - 0.5) * 28;
-                        wrapper.style.transform = 'scale(1.14) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg)';
-                        inner.style.setProperty('--gloss-x', (100 - (x / rect.width) * 100) + '%');
-                        inner.style.setProperty('--gloss-y', (100 - (y / rect.height) * 100) + '%');
+            (function() {
+                if (window.cueverseScriptLoaded) return;
+                window.cueverseScriptLoaded = true;
+
+                const initCards = () => {
+                    document.querySelectorAll('.neon-border-wrapper').forEach(wrapper => {
+                        if (wrapper.dataset.tiltInitialized) return;
+                        wrapper.dataset.tiltInitialized = "true";
+
+                        const inner = wrapper.querySelector('.card-inner');
+                        if (inner) {
+                            wrapper.addEventListener('mousemove', (e) => {
+                                const rect = wrapper.getBoundingClientRect();
+                                const x = e.clientX - rect.left;
+                                const y = e.clientY - rect.top;
+                                const rx = ((y / rect.height) - 0.5) * -28;
+                                const ry = ((x / rect.width) - 0.5) * 28;
+                                wrapper.style.transform = 'scale(1.14) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg)';
+                                inner.style.setProperty('--gloss-x', (100 - (x / rect.width) * 100) + '%');
+                                inner.style.setProperty('--gloss-y', (100 - (y / rect.height) * 100) + '%');
+                            });
+                            wrapper.addEventListener('mouseleave', () => {
+                                wrapper.style.transform = 'scale(1) rotateX(0deg) rotateY(0deg)';
+                                inner.style.setProperty('--gloss-x', '170%');
+                                inner.style.setProperty('--gloss-y', '170%');
+                            });
+                        }
                     });
-                    wrapper.addEventListener('mouseleave', () => {
-                        wrapper.style.transform = 'scale(1) rotateX(0deg) rotateY(0deg)';
-                        inner.style.setProperty('--gloss-x', '170%');
-                        inner.style.setProperty('--gloss-y', '170%');
-                    });
+                };
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initCards);
+                } else {
+                    initCards();
                 }
-            });
+
+                const observer = new MutationObserver(initCards);
+                observer.observe(document.body, { childList: true, subtree: true });
+            })();
         <\/script>`;
 
         const fixedCardStructure = `<div class="card-container" style="perspective: 1500px; display: inline-flex; justify-content: center; align-items: center; margin: 20px;">${coreCardStructure}</div>`;
 
-        const finalCompiledPayload = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">${primaryStyles}</head><body style="background:#02040a; display:flex; flex-wrap:wrap; justify-content:center; align-items:center; min-height:100vh; margin:0; padding:4px; box-sizing:border-box;">${fixedCardStructure}${automationScript}</body></html>`;
+        const finalCompiledPayload = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">${primaryStyles}</head><body style="background:#02040a; display:flex; flex-wrap:wrap; justify-content:center; align-items:center; min-height:100vh; margin:0; padding:20px; box-sizing:border-box;">${fixedCardStructure}${automationScript}</body></html>`;
         const codeBox = document.getElementById('codeBox');
         const outputArea = document.getElementById('outputArea');
         if (codeBox) codeBox.value = finalCompiledPayload;
