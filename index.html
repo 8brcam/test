@@ -47,7 +47,7 @@
         }
         /* --- THE EVEN SHIELD ARCHITECTURE --- */
         .card-container {
-            display: flex;
+            display: inline-flex;
             justify-content: center;
             align-items: center;
             perspective: 1500px;
@@ -293,12 +293,12 @@
         </div>
 
         <div class="input-group">
-            <label for="urlInput">Player Portrait (Image URL) [Highly Recommended for Multi-Card]</label>
+            <label for="urlInput">Player Portrait (Image URL) [Recommended for Light Files]</label>
             <input type="text" id="urlInput" placeholder="https://example.com">
         </div>
 
         <div class="input-group">
-            <label>Or Upload File (Will make code bundle very large)</label>
+            <label>Or Upload File (Will make code bundle much larger)</label>
             <button type="button" class="btn-upload" style="background-color: #2563eb;" onclick="document.getElementById('imageLoader').click();">Choose Local File</button>
             <input type="file" id="imageLoader" accept="image/*" style="display: none !important;">
         </div>
@@ -332,7 +332,8 @@
 
         <div class="input-group" style="margin-top: 10px; border-top: 1px solid #374151; padding-top: 15px;">
             <button type="button" class="btn-upload" style="background-color: #3b82f6; margin-bottom: 10px;" onclick="downloadCardAsPNG()">Download Card Image (PNG)</button>
-            <button type="button" class="btn-upload" style="background-color: #10b981;" onclick="generateBakedCode()" id="actionBtn">Copy Card Code Bundle</button>
+            <button type="button" class="btn-upload" style="background-color: #10b981; margin-bottom: 10px;" onclick="generateFullPageCode()" id="actionBtn">1. Copy First Card (Creates Page)</button>
+            <button type="button" class="btn-upload" style="background-color: #8b5cf6;" onclick="generateSingleCardCode()" id="actionBtn2">2. Copy Next Cards (Adds to Page)</button>
         </div>
         
         <div class="input-group" id="outputArea" style="display: none; margin-top: 10px;">
@@ -356,7 +357,6 @@
 
     const flags = { pt: "🇵🇹", gb: "🇬🇧", us: "🇺🇸", br: "🇧🇷", de: "🇩🇪" };
 
-    // Helper to safely swap user graphics nodes into the card layout
     function injectAvatarImage(srcUrl) {
         avatarContainer.innerHTML = '';
         const img = document.createElement('img');
@@ -387,25 +387,23 @@
         });
     }
 
-    // 3. Picture Pipeline Loaders (URL Link Input takes priority)
+    // 3. Picture Pipeline Loaders
     if (urlInput) {
         urlInput.addEventListener('input', (e) => {
             const trimmedUrl = e.target.value.trim();
-            if (trimmedUrl) {
-                injectAvatarImage(trimmedUrl);
-            }
+            if (trimmedUrl) injectAvatarImage(trimmedUrl);
         });
     }
 
     if (imageLoader) {
         imageLoader.addEventListener('change', function(e) {
-            if (e.target.files && e.target.files[0]) { 
+            if (e.target.files && e.target.files) { 
                 const reader = new FileReader();
                 reader.onload = function(event) {
-                    if (urlInput) urlInput.value = ''; // Clear URL bar text if user switches back to raw upload
+                    if (urlInput) urlInput.value = ''; 
                     injectAvatarImage(event.target.result);
                 };
-                reader.readAsDataURL(e.target.files[0]);
+                reader.readAsDataURL(e.target.files);
             }
         });
     }
@@ -474,36 +472,27 @@
         });
     }
 
-    // 7. Smart Multi-Card Code Bundle Compiler Engine
-    function generateBakedCode() {
+    // 7A. Master Page Generator (Creates the main site structure)
+    window.generateFullPageCode = function() {
         const primaryStyles = document.getElementById('themeStylesheet')?.outerHTML || '';
         const coreCardStructure = document.querySelector('.card-container')?.innerHTML || '';
         
         const automationScript = `
         <script>
             (function() {
-                if (window.cueverseScriptLoaded) {
-                    if (window.initCards) window.initCards();
-                    return;
-                }
-                window.cueverseScriptLoaded = true;
-
-                window.initCards = () => {
+                const initCards = () => {
                     document.querySelectorAll('.neon-border-wrapper').forEach(wrapper => {
                         if (wrapper.dataset.tiltInitialized) return;
                         wrapper.dataset.tiltInitialized = "true";
-
                         const inner = wrapper.querySelector('.card-inner');
                         if (inner) {
                             wrapper.addEventListener('mousemove', (e) => {
                                 const rect = wrapper.getBoundingClientRect();
-                                const x = e.clientX - rect.left;
-                                const y = e.clientY - rect.top;
-                                const rx = ((y / rect.height) - 0.5) * -28;
-                                const ry = ((x / rect.width) - 0.5) * 28;
+                                const rx = ((e.clientY - rect.top) / rect.height - 0.5) * -28;
+                                const ry = ((e.clientX - rect.left) / rect.width - 0.5) * 28;
                                 wrapper.style.transform = 'scale(1.14) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg)';
-                                inner.style.setProperty('--gloss-x', (100 - (x / rect.width) * 100) + '%');
-                                inner.style.setProperty('--gloss-y', (100 - (y / rect.height) * 100) + '%');
+                                inner.style.setProperty('--gloss-x', (100 - (e.clientX - rect.left) / rect.width * 100) + '%');
+                                inner.style.setProperty('--gloss-y', (100 - (e.clientY - rect.top) / rect.height * 100) + '%');
                             });
                             wrapper.addEventListener('mouseleave', () => {
                                 wrapper.style.transform = 'scale(1) rotateX(0deg) rotateY(0deg)';
@@ -513,31 +502,38 @@
                         }
                     });
                 };
-
-                if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', window.initCards);
-                } else {
-                    window.initCards();
-                }
-                const observer = new MutationObserver(window.initCards);
-                observer.observe(document.body, { childList: true, subtree: true });
+                window.addEventListener('DOMContentLoaded', initCards);
+                new MutationObserver(initCards).observe(document.body, { childList: true, subtree: true });
             })();
         <\/script>`;
 
         const fixedCardStructure = `<div class="card-container" style="perspective: 1500px; display: inline-flex; justify-content: center; align-items: center; margin: 20px;">${coreCardStructure}</div>`;
+        const finalPayload = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">${primaryStyles}</head><body style="background:#02040a; display:flex; flex-wrap:wrap; justify-content:center; align-items:center; min-height:100vh; gap:20px; margin:0; padding:4px; box-sizing:border-box;">${fixedCardStructure}${automationScript}</body></html>`;
+        
+        copyToClipboard(finalPayload, 'actionBtn', 'Master Page Copied! ✓');
+    };
 
-        const finalCompiledPayload = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">${primaryStyles}</head><body style="background:#02040a; display:flex; flex-wrap:wrap; justify-content:center; align-items:center; min-height:100vh; margin:0; padding:20px; box-sizing:border-box;">${fixedCardStructure}${automationScript}</body></html>`;
+    // 7B. Appender Generator (Copies only the card layer to append down the road)
+    window.generateSingleCardCode = function() {
+        const coreCardStructure = document.querySelector('.card-container')?.innerHTML || '';
+        const cardPayload = `<div class="card-container" style="perspective: 1500px; display: inline-flex; justify-content: center; align-items: center; margin: 20px;">${coreCardStructure}</div>`;
+        
+        copyToClipboard(cardPayload, 'actionBtn2', 'Clean Card Code Copied! ✓');
+    };
+
+    function copyToClipboard(text, buttonId, successText) {
         const codeBox = document.getElementById('codeBox');
         const outputArea = document.getElementById('outputArea');
-        if (codeBox) codeBox.value = finalCompiledPayload;
+        const btn = document.getElementById(buttonId);
+        if (codeBox) codeBox.value = text;
         if (outputArea) outputArea.style.display = 'block';
 
-        navigator.clipboard.writeText(finalCompiledPayload).then(() => {
-            const btn = document.getElementById('actionBtn');
+        navigator.clipboard.writeText(text).then(() => {
             if (btn) {
-                btn.textContent = "COPIED TO CLIPBOARD! ✓";
+                const originalText = btn.textContent;
+                btn.textContent = successText;
                 btn.style.backgroundColor = "#059669";
-                setTimeout(() => { btn.textContent = "Copy Card Code Bundle"; btn.style.backgroundColor = "#10b981"; }, 2000);
+                setTimeout(() => { btn.textContent = originalText; btn.style.backgroundColor = buttonId === 'actionBtn' ? "#10b981" : "#8b5cf6"; }, 2000);
             }
         });
     }
