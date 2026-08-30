@@ -434,7 +434,6 @@
             cardInnerLayer.style.setProperty('--gloss-y', '170%');
         });
     }
-
     // 3. Picture Pipeline Loader
     if (imageLoader) {
         imageLoader.addEventListener('change', function(e) {
@@ -447,7 +446,7 @@
                     img.style.cssText = "width: 90%; height: auto; max-height: 115px; object-fit: contain; object-position: center center; z-index: 4; position: relative;";
                     avatarContainer.appendChild(img);
                 };
-                reader.readAsDataURL(e.target.files[0]); // Targets absolute binary photo stream safely
+                reader.readAsDataURL(e.target.files[0]); // Targets absolute single photo stream safely
             }
         });
     }
@@ -478,7 +477,6 @@
             cardInnerLayer.style.backgroundImage = `linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 45%), linear-gradient(225deg, rgba(0,0,0,0.4) 0%, transparent 55%), conic-gradient(from 145deg at 75% 25%, #b45309 0deg, #ffedd5 50deg, #451a03 120deg, transparent 190deg), conic-gradient(from 215deg at 35% 65%, #d97706 0deg, #2b1102 80deg, #fed7aa 140deg, transparent 220deg), linear-gradient(to bottom, #ffedd5 0%, #fed7aa 45%, #451a03 55%, #1c0a00 100%)`;
         }
     }
-
     // 5. Dynamic Sync Form Values & Compute Rounded Card OVR
     function updateCard() {
         cardName.textContent = nameInput.value || "Player Name";
@@ -517,11 +515,35 @@
         });
     }
 
-    // 7. Bundle Compiler
+    // 7. Interactive Bundle Compiler
     function generateBakedCode() {
         const primaryStyles = document.getElementById('themeStylesheet')?.outerHTML || '';
         const coreCardStructure = document.querySelector('.card-container')?.innerHTML || '';
-        const finalCompiledPayload = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">${primaryStyles}</head><body style="background:#02040a; display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0;">${coreCardStructure}</body></html>`;
+        
+        const automationScript = `
+        <script>
+            const wrapper = document.querySelector('.neon-border-wrapper');
+            const inner = document.querySelector('.card-inner');
+            if (wrapper && inner) {
+                wrapper.addEventListener('mousemove', (e) => {
+                    const rect = wrapper.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const rx = ((y / rect.height) - 0.5) * -28;
+                    const ry = ((x / rect.width) - 0.5) * 28;
+                    wrapper.style.transform = 'scale(1.14) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg)';
+                    inner.style.setProperty('--gloss-x', (100 - (x / rect.width) * 100) + '%');
+                    inner.style.setProperty('--gloss-y', (100 - (y / rect.height) * 100) + '%');
+                });
+                wrapper.addEventListener('mouseleave', () => {
+                    wrapper.style.transform = 'scale(1) rotateX(0deg) rotateY(0deg)';
+                    inner.style.setProperty('--gloss-x', '170%');
+                    inner.style.setProperty('--gloss-y', '170%');
+                });
+            }
+        <\/script>`;
+
+        const finalCompiledPayload = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">${primaryStyles}</head><body style="background:#02040a; display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0;">${coreCardStructure}${automationScript}</body></html>`;
         const codeBox = document.getElementById('codeBox');
         const outputArea = document.getElementById('outputArea');
         if (codeBox) codeBox.value = finalCompiledPayload;
