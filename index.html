@@ -453,7 +453,7 @@
         });
     }
 
-    // 7. Interactive Bundle Compiler with MULTI-CARD DUPLICATION CHECKS FIXED
+    // 7. Smart Multi-Card Code Bundle Compiler Engine
     function generateBakedCode() {
         const primaryStyles = document.getElementById('themeStylesheet')?.outerHTML || '';
         const coreCardStructure = document.querySelector('.card-container')?.innerHTML || '';
@@ -461,10 +461,13 @@
         const automationScript = `
         <script>
             (function() {
-                if (window.cueverseScriptLoaded) return;
+                if (window.cueverseScriptLoaded) {
+                    if (window.initCards) window.initCards();
+                    return;
+                }
                 window.cueverseScriptLoaded = true;
 
-                const initCards = () => {
+                window.initCards = () => {
                     document.querySelectorAll('.neon-border-wrapper').forEach(wrapper => {
                         if (wrapper.dataset.tiltInitialized) return;
                         wrapper.dataset.tiltInitialized = "true";
@@ -491,18 +494,18 @@
                 };
 
                 if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', initCards);
+                    document.addEventListener('DOMContentLoaded', window.initCards);
                 } else {
-                    initCards();
+                    window.initCards();
                 }
-
-                const observer = new MutationObserver(initCards);
+                const observer = new MutationObserver(window.initCards);
                 observer.observe(document.body, { childList: true, subtree: true });
             })();
         <\/script>`;
 
         const fixedCardStructure = `<div class="card-container" style="perspective: 1500px; display: inline-flex; justify-content: center; align-items: center; margin: 20px;">${coreCardStructure}</div>`;
 
+        // INJECTION PROTOCOL: Generates a complete standalone page on the first click, but provides clean appends for card 2, 3, etc.
         const finalCompiledPayload = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">${primaryStyles}</head><body style="background:#02040a; display:flex; flex-wrap:wrap; justify-content:center; align-items:center; min-height:100vh; margin:0; padding:20px; box-sizing:border-box;">${fixedCardStructure}${automationScript}</body></html>`;
         const codeBox = document.getElementById('codeBox');
         const outputArea = document.getElementById('outputArea');
