@@ -293,8 +293,13 @@
         </div>
 
         <div class="input-group">
-            <label>Player Portrait Picture</label>
-            <button type="button" class="btn-upload" style="background-color: #2563eb;" onclick="document.getElementById('imageLoader').click();">Choose Image File</button>
+            <label for="urlInput">Player Portrait (Image URL) [Highly Recommended for Multi-Card]</label>
+            <input type="text" id="urlInput" placeholder="https://example.com">
+        </div>
+
+        <div class="input-group">
+            <label>Or Upload File (Will make code bundle very large)</label>
+            <button type="button" class="btn-upload" style="background-color: #2563eb;" onclick="document.getElementById('imageLoader').click();">Choose Local File</button>
             <input type="file" id="imageLoader" accept="image/*" style="display: none !important;">
         </div>
 
@@ -343,12 +348,22 @@
     const avatarContainer = document.getElementById('avatarPlaceholder');
     const glowWrapper = document.getElementById('glowWrapper');
     const nameInput = document.getElementById('nameInput');
+    const urlInput = document.getElementById('urlInput');
     const countryInput = document.getElementById('countryInput');
     const tierInput = document.getElementById('tierInput');
     const imageLoader = document.getElementById('imageLoader');
     const metrics = ['agg', 'ctr', 'sel', 'pot', 'saf', 'tem'];
 
     const flags = { pt: "🇵🇹", gb: "🇬🇧", us: "🇺🇸", br: "🇧🇷", de: "🇩🇪" };
+
+    // Helper to safely swap user graphics nodes into the card layout
+    function injectAvatarImage(srcUrl) {
+        avatarContainer.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = srcUrl;
+        img.style.cssText = "width: 90%; height: auto; max-height: 115px; object-fit: contain; object-position: center center; z-index: 4; position: relative;";
+        avatarContainer.appendChild(img);
+    }
 
     // 2. Interactive Tilt Controller
     if (glowWrapper) {
@@ -372,17 +387,23 @@
         });
     }
 
-    // 3. Picture Pipeline Loader
+    // 3. Picture Pipeline Loaders (URL Link Input takes priority)
+    if (urlInput) {
+        urlInput.addEventListener('input', (e) => {
+            const trimmedUrl = e.target.value.trim();
+            if (trimmedUrl) {
+                injectAvatarImage(trimmedUrl);
+            }
+        });
+    }
+
     if (imageLoader) {
         imageLoader.addEventListener('change', function(e) {
             if (e.target.files && e.target.files[0]) { 
                 const reader = new FileReader();
                 reader.onload = function(event) {
-                    avatarContainer.innerHTML = '';
-                    const img = document.createElement('img');
-                    img.src = event.target.result;
-                    img.style.cssText = "width: 90%; height: auto; max-height: 115px; object-fit: contain; object-position: center center; z-index: 4; position: relative;";
-                    avatarContainer.appendChild(img);
+                    if (urlInput) urlInput.value = ''; // Clear URL bar text if user switches back to raw upload
+                    injectAvatarImage(event.target.result);
                 };
                 reader.readAsDataURL(e.target.files[0]);
             }
@@ -505,7 +526,6 @@
 
         const fixedCardStructure = `<div class="card-container" style="perspective: 1500px; display: inline-flex; justify-content: center; align-items: center; margin: 20px;">${coreCardStructure}</div>`;
 
-        // INJECTION PROTOCOL: Generates a complete standalone page on the first click, but provides clean appends for card 2, 3, etc.
         const finalCompiledPayload = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">${primaryStyles}</head><body style="background:#02040a; display:flex; flex-wrap:wrap; justify-content:center; align-items:center; min-height:100vh; margin:0; padding:20px; box-sizing:border-box;">${fixedCardStructure}${automationScript}</body></html>`;
         const codeBox = document.getElementById('codeBox');
         const outputArea = document.getElementById('outputArea');
