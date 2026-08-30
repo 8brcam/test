@@ -47,7 +47,6 @@
         }
         /* --- THE EVEN SHIELD ARCHITECTURE --- */
         .card-container {
-            flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -68,11 +67,6 @@
             transform-style: preserve-3d;
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
             clip-path: polygon(0% 8%, 20% 0%, 50% 3%, 80% 0%, 100% 8%, 100% 88%, 50% 100%, 0% 88%);
-        }
-
-        .neon-border-wrapper:hover {
-            transform: scale(1.14) rotateX(10deg) rotateY(-5deg);
-            box-shadow: 0 30px 70px rgba(0, 229, 255, 0.35), 0 15px 30px rgba(0, 102, 255, 0.25);
         }
 
         .fut-card {
@@ -121,7 +115,6 @@
             pointer-events: none;
             transition: background-position 0.15s cubic-bezier(0.25, 1, 0.5, 1);
         }
-
         .card-top {
             display: flex;
             height: 135px;
@@ -141,7 +134,6 @@
             border-right: 1px solid rgba(0, 0, 0, 0.08);
             z-index: 4;
         }
-
         .ovr-txt {
             font-size: 46px;
             font-weight: 900;
@@ -150,26 +142,24 @@
             color: #050401;
             text-shadow: 0 1px 1px rgba(255,255,255,0.4);
         }
-
         .pos-txt { font-size: 13px; font-weight: 900; text-transform: uppercase; color: #050401; }
         .club-icon { width: 20px; height: 20px; opacity: 0.85; margin-top: 2px; }
 
         .avatar-placeholder {
             width: 75%;
             display: flex;
-            justify-content: center;   /* Perfectly centers image horizontally */
-            align-items: center;       /* Perfectly centers image vertically */
+            justify-content: center;
+            align-items: center;
             overflow: hidden;
             z-index: 4;
             height: 100%;
         }
-
         .avatar-placeholder svg, .avatar-placeholder img {
             width: 90%;
             height: auto;
             max-height: 115px;
             object-fit: contain;
-            object-position: center center; /* Precise graphic absolute centering parameter */
+            object-position: center center;
         }
 
         .name-box {
@@ -177,7 +167,7 @@
             justify-content: center;
             align-items: center;
             width: 92%;                       
-            margin: 15px auto 0 auto;        /* Shifted downwards from the top header */
+            margin: 15px auto 0 auto;
             padding: 4px 0;
             z-index: 4;
             background-color: var(--stat-panel-bg); 
@@ -186,7 +176,6 @@
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
             box-sizing: border-box;
         }
-
         .player-name {
             text-align: center;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -205,7 +194,7 @@
             align-items: center;
             padding: 10px 16px;       
             width: 92%;               
-            margin: 14px auto 0 auto;        /* Pushed box structure downwards */
+            margin: 14px auto 0 auto;
             z-index: 4; 
             background-color: var(--stat-panel-bg);
             border-radius: 8px;
@@ -213,56 +202,28 @@
             box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.55);
             box-sizing: border-box;
         }
-
-        .stat-column {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;                 
-            flex: 1;
-        }
-
-        .stat-item {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            gap: 10px;                
-            line-height: 1.1;
-            width: 100%;
-        }
-
-        .stat-val { 
-            font-size: 22px;          
-            font-weight: 900; 
-            color: #fff; 
-            width: 32px;
-            text-align: left;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-        }
-
-        .stat-label {
-            font-size: 15px;          
-            font-weight: 800;
-            color: #ffd84a; 
-            text-transform: uppercase;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-        }
-
-        .stats-vertical-divider {
-            width: 2px;
-            height: 68px;             
-            background-color: var(--stat-box-border);
-            opacity: 0.75;
-            margin: 0 8px;
-            border-radius: 1px;
-        }
+        .stat-column { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+        .stat-item { display: flex; align-items: center; justify-content: flex-start; gap: 10px; line-height: 1.1; width: 100%; }
+        .stat-val { font-size: 22px; font-weight: 900; color: #fff; width: 32px; text-align: left; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+        .stat-label { font-size: 15px; font-weight: 800; color: #ffd84a; text-transform: uppercase; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+        .stats-vertical-divider { width: 2px; height: 68px; background-color: var(--stat-box-border); opacity: 0.75; margin: 0 8px; border-radius: 1px; }
 
         /* --- CONTROL PANEL SIDEBAR --- */
-        .controls-panel { display: flex; flex-direction: column; gap: 14px; width: 320px; border-left: 1px solid #374151; padding-left: 30px; max-height: 90vh; overflow-y: auto; }
+        .controls-panel { 
+            display: none; 
+            flex-direction: column; 
+            gap: 14px; 
+            width: 320px; 
+            border-left: 1px solid #374151; 
+            padding-left: 30px; 
+            max-height: 90vh; 
+            overflow-y: auto; 
+        }
         h2 { font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin-top: 0; font-size: 24px; border-bottom: 1px solid #475569; padding-bottom: 8px; }
         .input-group { display: flex; flex-direction: column; gap: 4px; }
         label { font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 13px; font-weight: 600; color: #94a3b8; }
         input[type="text"], select, textarea { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: #0f172a; border: 1px solid #475569; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 15px; outline: none; }
-        .btn-upload { font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: white; border: none; padding: 10px 14px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; }
+        .btn-upload { font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: white; border: none; padding: 10px 14px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; transition: background-color 0.2s; }
         .slider-row { display: flex; align-items: center; gap: 12px; }
         input[type="range"] { flex: 1; accent-color: #dca021; cursor: pointer; }
         .slider-val { width: 30px; text-align: right; font-weight: 700; font-size: 15px; }
@@ -276,14 +237,16 @@
 <body>
 <div class="container">
     <div class="card-container">
+        <!-- Outer Glowing Geometric Frame Wrapper -->
         <div class="neon-border-wrapper" id="glowWrapper">
             <div class="fut-card" id="cardElement">
+                <!-- Multi-layered Foil Composite Face -->
                 <div class="card-inner" id="cardInnerLayer">
+                    
                     <div class="card-top">
                         <div class="badge-ovr">
                             <span class="ovr-txt" id="cardOvr">85</span>
                             <span class="pos-txt" id="cardPos">CUE</span>
-                            <!-- Inline text block securely displays flag emojis everywhere automatically -->
                             <span id="cardFlag" style="font-size: 22px; line-height: 1; margin: 4px 0; display: inline-block; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));">🇵🇹</span>
                             <svg class="club-icon" viewBox="0 0 100 100" xmlns="http://w3.org">
                                 <circle cx="50" cy="50" r="45" fill="#000"/><circle cx="50" cy="50" r="20" fill="#fff"/>
@@ -314,11 +277,13 @@
                             <div class="stat-item"><span class="stat-val" id="cardTem">85</span><span class="stat-label">TEM</span></div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
-    <!-- Configuration Settings Sidebar Controls -->
+
+    <!-- Administrative Configuration Controls Panel -->
     <div class="controls-panel" id="adminPanel">
         <h2>Cueverse Card Editor</h2>
         
@@ -329,7 +294,6 @@
 
         <div class="input-group">
             <label>Player Portrait Picture</label>
-            <!-- Fixed click invocation maps securely across all desktop and mobile hosting conditions -->
             <button type="button" class="btn-upload" style="background-color: #2563eb;" onclick="document.getElementById('imageLoader').click();">Choose Image File</button>
             <input type="file" id="imageLoader" accept="image/*" style="display: none !important;">
         </div>
@@ -354,33 +318,12 @@
             </select>
         </div>
 
-        <div class="input-group">
-            <label for="aggInput">Aggression (AGG)</label>
-            <div class="slider-row">
-                <input type="range" id="aggInput" min="10" max="99" value="85">
-                <span class="slider-val" id="aggVal">85</span>
-            </div>
-        </div>
-        <div class="input-group">
-            <label for="ctrInput">Control (CTR)</label>
-            <div class="slider-row"><input type="range" id="ctrInput" min="10" max="99" value="85"><span class="slider-val" id="ctrVal">85</span></div>
-        </div>
-        <div class="input-group">
-            <label for="selInput">Shot Selection (SEL)</label>
-            <div class="slider-row"><input type="range" id="selInput" min="10" max="99" value="85"><span class="slider-val" id="selVal">85</span></div>
-        </div>
-        <div class="input-group">
-            <label for="potInput">Potting (POT)</label>
-            <div class="slider-row"><input type="range" id="potInput" min="10" max="99" value="85"><span class="slider-val" id="potVal">85</span></div>
-        </div>
-        <div class="input-group">
-            <label for="safInput">Safety (SAF)</label>
-            <div class="slider-row"><input type="range" id="safInput" min="10" max="99" value="85"><span class="slider-val" id="safVal">85</span></div>
-        </div>
-        <div class="input-group">
-            <label for="temInput">Temperament (TEM)</label>
-            <div class="slider-row"><input type="range" id="temInput" min="10" max="99" value="85"><span class="slider-val" id="temVal">85</span></div>
-        </div>
+        <div class="input-group"><label for="aggInput">Aggression (AGG)</label><div class="slider-row"><input type="range" id="aggInput" min="10" max="99" value="85"><span class="slider-val" id="aggVal">85</span></div></div>
+        <div class="input-group"><label for="ctrInput">Control (CTR)</label><div class="slider-row"><input type="range" id="ctrInput" min="10" max="99" value="85"><span class="slider-val" id="ctrVal">85</span></div></div>
+        <div class="input-group"><label for="selInput">Shot Selection (SEL)</label><div class="slider-row"><input type="range" id="selInput" min="10" max="99" value="85"><span class="slider-val" id="selVal">85</span></div></div>
+        <div class="input-group"><label for="potInput">Potting (POT)</label><div class="slider-row"><input type="range" id="potInput" min="10" max="99" value="85"><span class="slider-val" id="potVal">85</span></div></div>
+        <div class="input-group"><label for="safInput">Safety (SAF)</label><div class="slider-row"><input type="range" id="safInput" min="10" max="99" value="85"><span class="slider-val" id="safVal">85</span></div></div>
+        <div class="input-group"><label for="temInput">Temperament (TEM)</label><div class="slider-row"><input type="range" id="temInput" min="10" max="99" value="85"><span class="slider-val" id="temVal">85</span></div></div>
 
         <div class="input-group" style="margin-top: 10px; border-top: 1px solid #374151; padding-top: 15px;">
             <button type="button" class="btn-upload" style="background-color: #3b82f6; margin-bottom: 10px;" onclick="downloadCardAsPNG()">Download Card Image (PNG)</button>
@@ -405,13 +348,7 @@
     const imageLoader = document.getElementById('imageLoader');
     const metrics = ['agg', 'ctr', 'sel', 'pot', 'saf', 'tem'];
 
-    const flags = {
-        pt: "🇵🇹",
-        gb: "🇬🇧",
-        us: "🇺🇸",
-        br: "🇧🇷",
-        de: "🇩🇪"
-    };
+    const flags = { pt: "🇵🇹", gb: "🇬🇧", us: "🇺🇸", br: "🇧🇷", de: "🇩🇪" };
 
     // 2. Interactive Tilt Controller
     if (glowWrapper) {
@@ -434,6 +371,7 @@
             cardInnerLayer.style.setProperty('--gloss-y', '170%');
         });
     }
+
     // 3. Picture Pipeline Loader
     if (imageLoader) {
         imageLoader.addEventListener('change', function(e) {
@@ -446,11 +384,10 @@
                     img.style.cssText = "width: 90%; height: auto; max-height: 115px; object-fit: contain; object-position: center center; z-index: 4; position: relative;";
                     avatarContainer.appendChild(img);
                 };
-                reader.readAsDataURL(e.target.files[0]); // Targets absolute single photo stream safely
+                reader.readAsDataURL(e.target.files[0]);
             }
         });
     }
-
     // 4. Color Palette & Neon Border Switcher Engine
     function applyTierTheming(selectedTier) {
         if (!cardInnerLayer) return;
@@ -477,6 +414,7 @@
             cardInnerLayer.style.backgroundImage = `linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 45%), linear-gradient(225deg, rgba(0,0,0,0.4) 0%, transparent 55%), conic-gradient(from 145deg at 75% 25%, #b45309 0deg, #ffedd5 50deg, #451a03 120deg, transparent 190deg), conic-gradient(from 215deg at 35% 65%, #d97706 0deg, #2b1102 80deg, #fed7aa 140deg, transparent 220deg), linear-gradient(to bottom, #ffedd5 0%, #fed7aa 45%, #451a03 55%, #1c0a00 100%)`;
         }
     }
+
     // 5. Dynamic Sync Form Values & Compute Rounded Card OVR
     function updateCard() {
         cardName.textContent = nameInput.value || "Player Name";
@@ -515,35 +453,39 @@
         });
     }
 
-    // 7. Interactive Bundle Compiler
+    // 7. Interactive Bundle Compiler with MULTI-CARD ARRAY COEXISTENCE LOOP FIXED
     function generateBakedCode() {
         const primaryStyles = document.getElementById('themeStylesheet')?.outerHTML || '';
         const coreCardStructure = document.querySelector('.card-container')?.innerHTML || '';
         
+        // Loop handles each card instance separately so pasting multiple bundles doesn't break motion scripts
         const automationScript = `
         <script>
-            const wrapper = document.querySelector('.neon-border-wrapper');
-            const inner = document.querySelector('.card-inner');
-            if (wrapper && inner) {
-                wrapper.addEventListener('mousemove', (e) => {
-                    const rect = wrapper.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    const rx = ((y / rect.height) - 0.5) * -28;
-                    const ry = ((x / rect.width) - 0.5) * 28;
-                    wrapper.style.transform = 'scale(1.14) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg)';
-                    inner.style.setProperty('--gloss-x', (100 - (x / rect.width) * 100) + '%');
-                    inner.style.setProperty('--gloss-y', (100 - (y / rect.height) * 100) + '%');
-                });
-                wrapper.addEventListener('mouseleave', () => {
-                    wrapper.style.transform = 'scale(1) rotateX(0deg) rotateY(0deg)';
-                    inner.style.setProperty('--gloss-x', '170%');
-                    inner.style.setProperty('--gloss-y', '170%');
-                });
-            }
+            document.querySelectorAll('.neon-border-wrapper').forEach(wrapper => {
+                const inner = wrapper.querySelector('.card-inner');
+                if (inner) {
+                    wrapper.addEventListener('mousemove', (e) => {
+                        const rect = wrapper.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        const rx = ((y / rect.height) - 0.5) * -28;
+                        const ry = ((x / rect.width) - 0.5) * 28;
+                        wrapper.style.transform = 'scale(1.14) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg)';
+                        inner.style.setProperty('--gloss-x', (100 - (x / rect.width) * 100) + '%');
+                        inner.style.setProperty('--gloss-y', (100 - (y / rect.height) * 100) + '%');
+                    });
+                    wrapper.addEventListener('mouseleave', () => {
+                        wrapper.style.transform = 'scale(1) rotateX(0deg) rotateY(0deg)';
+                        inner.style.setProperty('--gloss-x', '170%');
+                        inner.style.setProperty('--gloss-y', '170%');
+                    });
+                }
+            });
         <\/script>`;
 
-        const finalCompiledPayload = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">${primaryStyles}</head><body style="background:#02040a; display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0;">${coreCardStructure}${automationScript}</body></html>`;
+        const fixedCardStructure = `<div class="card-container" style="perspective: 1500px; display: inline-flex; justify-content: center; align-items: center; margin: 20px;">${coreCardStructure}</div>`;
+
+        const finalCompiledPayload = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">${primaryStyles}</head><body style="background:#02040a; display:flex; flex-wrap:wrap; justify-content:center; align-items:center; min-height:100vh; margin:0; padding:4px; box-sizing:border-box;">${fixedCardStructure}${automationScript}</body></html>`;
         const codeBox = document.getElementById('codeBox');
         const outputArea = document.getElementById('outputArea');
         if (codeBox) codeBox.value = finalCompiledPayload;
@@ -557,6 +499,13 @@
                 setTimeout(() => { btn.textContent = "Copy Card Code Bundle"; btn.style.backgroundColor = "#10b981"; }, 2000);
             }
         });
+    }
+
+    // 8. Secret URL Search String Parameter Guard Verification
+    const urlParameters = new URLSearchParams(window.location.search);
+    if (urlParameters.get('edit') === 'true') {
+        const adminPanel = document.getElementById('adminPanel');
+        if (adminPanel) adminPanel.style.display = 'flex';
     }
 
     [nameInput, countryInput, tierInput].forEach(el => {
