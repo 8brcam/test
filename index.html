@@ -143,7 +143,13 @@
             line-height: 38px;
             letter-spacing: -2px;
             color: var(--card-text);
-            text-shadow: 0 1px 1px rgba(255,255,255,0.4);
+            /* Crisp drop shadow layer ensuring text legibility on all backgrounds */
+            text-shadow: 
+                -1px -1px 0px rgba(255, 255, 255, 0.4),
+                 1px -1px 0px rgba(255, 255, 255, 0.4),
+                -1px  1px 0px rgba(255, 255, 255, 0.4),
+                 1px  1px 0px rgba(255, 255, 255, 0.4),
+                 0px  2px 4px rgba(0, 0, 0, 0.8);
         }
 
         .pos-txt { font-size: 13px; font-weight: 900; text-transform: uppercase; color: var(--card-text); }
@@ -362,7 +368,7 @@
             </div>
         </div>
 
-        <!-- NEW OPTIONAL FORCED SELECTION CONTROLLER MATRIX -->
+        <!-- MANUAL CLASS MATRIX SELECTOR OVERRIDE LAYER -->
         <div class="input-group" id="manualTierContainer" style="margin-top: 5px;">
             <label for="tierSelectInput">Forced Card Classification</label>
             <select id="tierSelectInput">
@@ -414,7 +420,7 @@
         ma: "🇲🇦", sn: "🇸🇳", ng: "🇳🇬", eg: "🇪🇬", gh: "🇬🇭", za: "🇿🇦", sa: "🇸🇦", ae: "🇦🇪"
     };
 
-    // 2. Interactive Tilt & Foil Engine
+    // 2. Interactive Tilt & Foil Shine Controller
     if (glowWrapper) {
         glowWrapper.addEventListener('mousemove', (e) => {
             const rect = glowWrapper.getBoundingClientRect();
@@ -423,6 +429,7 @@
             const rotateX = ((y / rect.height) - 0.5) * -28; 
             const rotateY = ((x / rect.width) - 0.5) * 28;
             glowWrapper.style.transform = `scale(1.14) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            
             const glossX = (x / rect.width) * 100;
             const glossY = (y / rect.height) * 100;
             cardInnerLayer.style.setProperty('--gloss-x', `${100 - glossX}%`);
@@ -436,7 +443,7 @@
         });
     }
 
-    // 3. Picture Pipeline Loader
+    // 3. Client Memory Image Pipeline Loader
     if (imageLoader) {
         imageLoader.addEventListener('change', function(e) {
             if (e.target.files && e.target.files[0]) { 
@@ -462,7 +469,7 @@
             document.documentElement.style.setProperty('--neon-start', '#10b981');
             document.documentElement.style.setProperty('--neon-mid', '#022c22');
             document.documentElement.style.setProperty('--neon-end', '#10b981');
-            document.documentElement.style.setProperty('--card-text', '#022c22');
+            document.documentElement.style.setProperty('--card-text', '#ffffff'); // Color Visibility Fix
             cardInnerLayer.style.backgroundImage = `linear-gradient(135deg, rgba(255,255,255,0.45) 0%, transparent 40%), linear-gradient(225deg, rgba(16,185,129,0.3) 0%, transparent 60%), conic-gradient(from 145deg at 75% 25%, #047857 0deg, #34d399 50deg, #022c22 120deg, transparent 190deg), conic-gradient(from 215deg at 35% 65%, #059669 0deg, #022c22 80deg, #a7f3d0 140deg, transparent 220deg), linear-gradient(to bottom, #111827 0%, #064e3b 45%, #022c22 55%, #022c22 100%)`;
         } else if (selectedTier === 'master') {
             document.documentElement.style.setProperty('--stat-box-border', '#1d4ed8'); 
@@ -470,7 +477,7 @@
             document.documentElement.style.setProperty('--neon-start', '#00f0ff');
             document.documentElement.style.setProperty('--neon-mid', '#1e40af');
             document.documentElement.style.setProperty('--neon-end', '#00f0ff');
-            document.documentElement.style.setProperty('--card-text', '#1e3a8a');
+            document.documentElement.style.setProperty('--card-text', '#ffffff'); // Color Visibility Fix
             cardInnerLayer.style.backgroundImage = `linear-gradient(135deg, rgba(255,255,255,0.7) 0%, transparent 45%), linear-gradient(225deg, rgba(0,240,255,0.25) 0%, transparent 55%), conic-gradient(from 145deg at 75% 25%, #1d4ed8 0deg, #60a5fa 50deg, #1e3a8a 120deg, transparent 190deg), conic-gradient(from 215deg at 35% 65%, #2563eb 0deg, #172554 80deg, #93c5fd 140deg, transparent 220deg), linear-gradient(to bottom, #0f172a 0%, #1e40af 45%, #172554 55%, #0f172a 100%)`;
         } else if (selectedTier === 'gold') {
             document.documentElement.style.setProperty('--stat-box-border', '#946f02'); 
@@ -494,11 +501,11 @@
             document.documentElement.style.setProperty('--neon-start', '#d97706');
             document.documentElement.style.setProperty('--neon-mid', '#451a03');
             document.documentElement.style.setProperty('--neon-end', '#d97706');
-            document.documentElement.style.setProperty('--card-text', '#2b1102');
+            document.documentElement.style.setProperty('--card-text', '#ffedd5');
             cardInnerLayer.style.backgroundImage = `linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 45%), linear-gradient(225deg, rgba(0,0,0,0.4) 0%, transparent 55%), conic-gradient(from 145deg at 75% 25%, #b45309 0deg, #ffedd5 50deg, #451a03 120deg, transparent 190deg), conic-gradient(from 215deg at 35% 65%, #d97706 0deg, #2b1102 80deg, #fed7aa 140deg, transparent 220deg), linear-gradient(to bottom, #ffedd5 0%, #fed7aa 45%, #451a03 55%, #1c0a00 100%)`;
         }
     }
-    // 5. Dynamic Sync Form Values & Balanced Points Bracket Matrix Calculation
+    // 5. Balanced Progression Bracket Matrix Calculator
     function updateCard() {
         cardName.textContent = nameInput.value || "Player Name";
         cardFlag.textContent = flags[countryInput.value] || "🏳️";
@@ -552,39 +559,17 @@
             anchorLinkTrigger.download = `cueverse_${sanitisedFilename.toLowerCase()}_card.png`;
             anchorLinkTrigger.href = canvas.toDataURL('image/png');
             anchorLinkTrigger.click();
-        }).catch(err => { console.error('Canvas processing issue:', err); });
+        }).catch(err => { console.error('Canvas capture issue context dropped:', err); });
     }
 
-    // 7. Interactive Bundle Compiler Core
+    // 7. Interactive Bundle Template Compiler Core
     function generateBakedCode() {
         const primaryStyles = document.getElementById('themeStylesheet')?.outerHTML || '';
         const coreCardStructure = document.querySelector('.card-container')?.innerHTML || '';
         const opTag = String.fromCharCode(60, 115, 99, 114, 105, 112, 116, 62);
         const clTag = String.fromCharCode(60, 47, 115, 99, 114, 105, 112, 116, 62);
         
-        const automationScript = `
-        ${opTag}
-            const wrapper = document.querySelector('.neon-border-wrapper');
-            const inner = document.querySelector('.card-inner');
-            if (wrapper && inner) {
-                wrapper.addEventListener('mousemove', (e) => {
-                    const rect = wrapper.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    const rx = ((y / rect.height) - 0.5) * -28;
-                    const ry = ((x / rect.width) - 0.5) * 28;
-                    wrapper.style.transform = 'scale(1.14) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg)';
-                    inner.style.setProperty('--gloss-x', (100 - (x / wrapper.offsetWidth) * 100) + '%');
-                    inner.style.setProperty('--gloss-y', (100 - (y / wrapper.offsetHeight) * 100) + '%');
-                });
-                wrapper.addEventListener('mouseleave', () => {
-                    wrapper.style.transform = 'scale(1) rotateX(0deg) rotateY(0deg)';
-                    inner.style.setProperty('--gloss-x', '170%');
-                    inner.style.setProperty('--gloss-y', '170%');
-                });
-            }
-        ${clTag}\n`;
-
+        const automationScript = `${opTag} const wrapper = document.querySelector('.neon-border-wrapper'); const inner = document.querySelector('.card-inner'); if (wrapper && inner) { wrapper.addEventListener('mousemove', (e) => { const rect = wrapper.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top; wrapper.style.transform = 'scale(1.14) rotateX(' + (((y / rect.height) - 0.5) * -28) + 'deg) rotateY(' + (((x / rect.width) - 0.5) * 28) + 'deg)'; inner.style.setProperty('--gloss-x', (100 - (x / wrapper.offsetWidth) * 100) + '%'); inner.style.setProperty('--gloss-y', (100 - (y / wrapper.offsetHeight) * 100) + '%'); }); wrapper.addEventListener('mouseleave', () => { wrapper.style.transform = 'scale(1) rotateX(0deg) rotateY(0deg)'; inner.style.setProperty('--gloss-x', '170%'); inner.style.setProperty('--gloss-y', '170%'); }); } ${clTag}\n`;
         const fixedCardStructure = `<div class="card-container" style="perspective: 1500px; display: flex; justify-content: center; align-items: center; width: 100%; height: 100vh;">${coreCardStructure}</div>`;
         const finalCompiledPayload = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">${primaryStyles}</head><body style="background:#02040a; display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0; overflow:hidden;">${fixedCardStructure}${automationScript}</body></html>`;
         
