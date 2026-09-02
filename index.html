@@ -12,7 +12,6 @@
             --panel-bg: #0b0f19;
             --text-color: #f8fafc;
             --card-text: #050401;
-            
             /* Dynamic Default Variable Anchors */
             --stat-box-border: #946f02;
             --stat-panel-bg: rgba(30, 20, 1, 0.75);
@@ -31,6 +30,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            box-sizing: border-box;
         }
 
         .container {
@@ -67,7 +67,7 @@
             align-items: center;
             animation: neonPulse 4s linear infinite;
             transform-style: preserve-3d;
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+            transition: transform 0.15s ease-out;
             clip-path: polygon(0% 8%, 20% 0%, 50% 3%, 80% 0%, 100% 8%, 100% 88%, 50% 100%, 0% 88%);
         }
 
@@ -89,6 +89,7 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
+
         .card-inner {
             position: relative;
             width: 100%;
@@ -115,7 +116,6 @@
             pointer-events: none;
             transition: background-position 0.15s cubic-bezier(0.25, 1, 0.5, 1);
         }
-
         .card-top {
             display: flex;
             height: 135px;
@@ -148,6 +148,7 @@
 
         .pos-txt { font-size: 13px; font-weight: 900; text-transform: uppercase; color: var(--card-text); }
         .club-icon { width: 20px; height: 20px; opacity: 0.85; margin-top: 2px; }
+        
         .avatar-placeholder {
             width: 75%;
             display: flex;
@@ -157,6 +158,7 @@
             z-index: 4;
             height: 100%;
         }
+        
         .avatar-placeholder svg, .avatar-placeholder img {
             width: 90%;
             height: auto;
@@ -179,6 +181,7 @@
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
             box-sizing: border-box;
         }
+        
         .player-name {
             text-align: center;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -205,6 +208,7 @@
             box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.55);
             box-sizing: border-box;
         }
+
         .stat-column { display: flex; flex-direction: column; gap: 3px; flex: 1; }
         .stat-item { display: flex; align-items: center; justify-content: flex-start; gap: 10px; line-height: 1.1; width: 100%; }
         .stat-val { font-size: 22px; font-weight: 900; color: #fff; width: 32px; text-align: left; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
@@ -213,7 +217,7 @@
 
         /* --- CONTROL PANEL SIDEBAR --- */
         .controls-panel { 
-            display: none; 
+            display: flex; 
             flex-direction: column; 
             gap: 14px; 
             width: 320px; 
@@ -222,6 +226,7 @@
             max-height: 90vh; 
             overflow-y: auto; 
         }
+        
         h2 { font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin-top: 0; font-size: 24px; border-bottom: 1px solid #475569; padding-bottom: 8px; }
         .input-group { display: flex; flex-direction: column; gap: 4px; }
         .checkbox-group { display: flex; flex-direction: row; align-items: center; gap: 10px; margin: 5px 0; }
@@ -349,11 +354,24 @@
                 </optgroup>
             </select>
         </div>
+        
         <div class="input-group" style="margin-top: 5px;">
             <div class="checkbox-group">
                 <input type="checkbox" id="winnerInput">
                 <label for="winnerInput" style="color: #67e8f9; font-weight: 800; font-size: 14px; cursor: pointer;">Previous Competition Winner 🏆</label>
             </div>
+        </div>
+
+        <!-- NEW OPTIONAL FORCED SELECTION CONTROLLER MATRIX -->
+        <div class="input-group" id="manualTierContainer" style="margin-top: 5px;">
+            <label for="tierSelectInput">Forced Card Classification</label>
+            <select id="tierSelectInput">
+                <option value="auto" selected>Automatic (Calculated by Sliders Score)</option>
+                <option value="master">Master Blue Elite Tier</option>
+                <option value="gold">Legendary Gold Elite Tier</option>
+                <option value="silver">Metallic Slate Silver Tier</option>
+                <option value="bronze">Earthen Copper Bronze Tier</option>
+            </select>
         </div>
 
         <div class="input-group"><label for="aggInput">Aggression (AGG)</label><div class="slider-row"><input type="range" id="aggInput" min="10" max="99" value="85"><span class="slider-val" id="aggVal">85</span></div></div>
@@ -373,6 +391,7 @@
         </div>
     </div>
 </div>
+
 <script>
     // 1. DOM Target Configurations
     const cardName = document.getElementById('cardName');
@@ -383,7 +402,9 @@
     const nameInput = document.getElementById('nameInput');
     const countryInput = document.getElementById('countryInput');
     const winnerInput = document.getElementById('winnerInput');
+    const tierSelectInput = document.getElementById('tierSelectInput');
     const imageLoader = document.getElementById('imageLoader');
+    const cardOvr = document.getElementById('cardOvr');
     const metrics = ['agg', 'ctr', 'sel', 'pot', 'saf', 'tem'];
 
     const flags = { 
@@ -393,11 +414,11 @@
         ma: "🇲🇦", sn: "🇸🇳", ng: "🇳🇬", eg: "🇪🇬", gh: "🇬🇭", za: "🇿🇦", sa: "🇸🇦", ae: "🇦🇪"
     };
 
-    // 2. Interactive Tilt Controller
+    // 2. Interactive Tilt & Foil Engine
     if (glowWrapper) {
         glowWrapper.addEventListener('mousemove', (e) => {
             const rect = glowWrapper.getBoundingClientRect();
-            const x = e.clientX - rect.left; 
+            const x = e.clientX - rect.left;
             const y = e.clientY - rect.top; 
             const rotateX = ((y / rect.height) - 0.5) * -28; 
             const rotateY = ((x / rect.width) - 0.5) * 28;
@@ -496,48 +517,48 @@
         });
         
         const computedAverage = Math.round(totalStatsValue / metrics.length);
-        const ovrEl = document.getElementById('cardOvr');
-        if (ovrEl) ovrEl.textContent = computedAverage;
+        if (cardOvr) cardOvr.textContent = computedAverage;
         
-        // Balanced Progression Bracket Matrix Split Assignments
         if (winnerInput && winnerInput.checked) {
             applyTierTheming('champion');
+            if (tierSelectInput) tierSelectInput.disabled = true;
         } else {
-            if (computedAverage >= 90) {
-                applyTierTheming('master');
-            } else if (computedAverage >= 75) {
-                applyTierTheming('gold');
-            } else if (computedAverage >= 60) {
-                applyTierTheming('silver');
+            if (tierSelectInput) tierSelectInput.disabled = false;
+            const forcedMode = tierSelectInput ? tierSelectInput.value : 'auto';
+            
+            if (forcedMode !== 'auto') {
+                applyTierTheming(forcedMode);
             } else {
-                applyTierTheming('bronze');
+                if (computedAverage >= 90) { applyTierTheming('master'); }
+                else if (computedAverage >= 80) { applyTierTheming('gold'); }
+                else if (computedAverage >= 70) { applyTierTheming('silver'); }
+                else { applyTierTheming('bronze'); }
             }
         }
     }
 
     // 6. High-Quality Image Exporter Canvas Generation
     function downloadCardAsPNG() {
-        const cardTargetNode = document.getElementById('cardElement');
+        const cardTargetNode = document.getElementById('glowWrapper');
         if (!cardTargetNode) return;
         const sanitisedFilename = nameInput ? nameInput.value.trim().replace(/\s+/g, '_') : 'player';
-        if (glowWrapper) glowWrapper.style.transform = 'scale(1) rotateX(0deg) rotateY(0deg)';
+        
+        const cachedTransform = cardTargetNode.style.transform;
+        cardTargetNode.style.transform = 'scale(1) rotateX(0deg) rotateY(0deg)';
         
         html2canvas(cardTargetNode, { useCORS: true, scale: 2, backgroundColor: null }).then(canvas => {
+            cardTargetNode.style.transform = cachedTransform;
             const anchorLinkTrigger = document.createElement('a');
             anchorLinkTrigger.download = `cueverse_${sanitisedFilename.toLowerCase()}_card.png`;
             anchorLinkTrigger.href = canvas.toDataURL('image/png');
             anchorLinkTrigger.click();
-        }).catch(err => {
-            console.error('Canvas processing warning thrown:', err);
-        });
+        }).catch(err => { console.error('Canvas processing issue:', err); });
     }
 
-    // 7. Interactive Bundle Compiler using character code sequences to stay 100% hidden character clean
+    // 7. Interactive Bundle Compiler Core
     function generateBakedCode() {
         const primaryStyles = document.getElementById('themeStylesheet')?.outerHTML || '';
         const coreCardStructure = document.querySelector('.card-container')?.innerHTML || '';
-        
-        // Bypassing string literal scans completely via raw ASCII arrays
         const opTag = String.fromCharCode(60, 115, 99, 114, 105, 112, 116, 62);
         const clTag = String.fromCharCode(60, 47, 115, 99, 114, 105, 112, 116, 62);
         
@@ -566,38 +587,24 @@
 
         const fixedCardStructure = `<div class="card-container" style="perspective: 1500px; display: flex; justify-content: center; align-items: center; width: 100%; height: 100vh;">${coreCardStructure}</div>`;
         const finalCompiledPayload = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">${primaryStyles}</head><body style="background:#02040a; display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0; overflow:hidden;">${fixedCardStructure}${automationScript}</body></html>`;
+        
         const codeBox = document.getElementById('codeBox');
-        const outputArea = document.getElementById('outputArea');
         if (codeBox) codeBox.value = finalCompiledPayload;
-        if (outputArea) outputArea.style.display = 'block';
+        if (document.getElementById('outputArea')) document.getElementById('outputArea').style.display = 'block';
 
         navigator.clipboard.writeText(finalCompiledPayload).then(() => {
             const btn = document.getElementById('actionBtn');
             if (btn) {
-                btn.textContent = "COPIED TO CLIPBOARD! ✓";
-                btn.style.backgroundColor = "#059669";
+                btn.textContent = "COPIED TO CLIPBOARD! ✓"; btn.style.backgroundColor = "#059669";
                 setTimeout(() => { btn.textContent = "Copy Card Code Bundle"; btn.style.backgroundColor = "#10b981"; }, 2000);
             }
         });
     }
 
     // 8. Event Listener Registrations & Initialization Routine
-    [nameInput, countryInput, winnerInput].forEach(el => {
-        if (el) el.addEventListener('input', updateCard);
-    });
-    metrics.forEach(m => {
-        const el = document.getElementById(`${m}Input`);
-        if (el) el.addEventListener('input', updateCard);
-    });
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const urlParameters = new URLSearchParams(window.location.search);
-        if (urlParameters.get('edit') === 'true') {
-            const adminPanel = document.getElementById('adminPanel');
-            if (adminPanel) adminPanel.style.display = 'flex';
-        }
-        updateCard();
-    });
+    [nameInput, countryInput, winnerInput, tierSelectInput].forEach(el => { if (el) el.addEventListener('input', updateCard); });
+    metrics.forEach(m => { const el = document.getElementById(`${m}Input`); if (el) el.addEventListener('input', updateCard); });
+    document.addEventListener('DOMContentLoaded', updateCard);
 </script>
 </body>
 </html>
